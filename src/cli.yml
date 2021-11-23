@@ -1,0 +1,43 @@
+name: dzp
+version: "0.1.0"
+author: Skye P. <spiralixp@gmail.com>
+about: DeniZip, the Denizen Project Manager
+subcommands:
+- new:
+    about: Creates a new Denizen project
+    version: "0.1.0"
+    author: Skye P. <spiralixp@gmail.com>
+    args:
+    - default:
+        help: Initializes the project data and skips input
+        short: d
+        long: default
+    - style:
+        help: Sets the project style
+        short: s
+        long: style
+        takes_value: true
+        value_name: STYLE
+    - NAME:
+        help: Sets the project name
+        required: true
+        index: 1
+- project:
+    about: Displays the current project info
+    version: "0.1.0"
+    author: Skye P. <spiralixp@gmail.com>
+    args:
+    - path:
+        help: The relative path to the project
+        short: p
+        long: path
+        takes_value: true
+        value_name: PATH
+- script:
+    about: Retrieves Denizen script data
+    version: "0.1.0"
+    author: Skye P. <spiralixp@gmail.com>
+    args:
+    - NAME:
+        help: Sets the script name
+        index: 1
