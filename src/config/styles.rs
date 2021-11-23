@@ -16,6 +16,7 @@ pub fn init_styles(force: bool) {
         create_dir(dir.as_str(), false);
         let _ = write(format!("{}/default.txt", dir), "src/data\nsrc/util\nsrc/main");
         let _ = write(format!("{}/main.txt", dir), "src/main");
+        let _ = write(format!("{}/single.txt", dir), ".");
     }
 }
 

@@ -37,16 +37,16 @@ pub fn new(matches: &ArgMatches) {
                 // Main dsc file
                 create(
                     format!("{}/{}.dsc", dirs.last().unwrap(), &project.name).as_str(), 
-                    format!("{}:{}", &project.name, MAIN));
+                    format!("{}:{}", &project.name, MAIN), true);
                 // README & LICENSE
-                create("README.md", project.readme_header());
-                create("LICENSE", project.license_text());
+                create("README.md", project.readme_header(), true);
+                create("LICENSE", project.license_text(), true);
                 // Create dzp directory
                 create_dir(".dzp", true);
-                create(".dzp/project", project.yaml());
+                create(".dzp/project", project.yaml(), true);
                 // Initialize git repository if possible
                 match Repository::init(current_dir().unwrap()) {
-                    Ok(_) => create(".gitignore", String::from("/.dzp")),
+                    Ok(_) => create(".gitignore", String::from("/.dzp"), true),
                     Err(e) => err("Failed to initialize git repository.", Some(e.to_string()))
                 }
             }

@@ -1,5 +1,6 @@
 use clap::{App, load_yaml};
 
+mod cache;
 mod config;
 mod io;
 mod structs;
