@@ -3,6 +3,14 @@ version: "0.1.0"
 author: Skye P. <spiralixp@gmail.com>
 about: DeniZip, the Denizen Project Manager
 subcommands:
+- compile:
+    about: Compiles the current project into a single file
+    version: "0.1.0"
+    author: Skye P. <spiralixp@gmail.com>
+    args:
+    - FILE:
+        help: Sets the output file path
+        index: 1
 - new:
     about: Creates a new Denizen project
     version: "0.1.0"
@@ -38,6 +46,10 @@ subcommands:
     version: "0.1.0"
     author: Skye P. <spiralixp@gmail.com>
     args:
+    - force:
+        help: Sets whether to ignore the cache or not
+        short: f
+        long: force
     - NAME:
         help: Sets the script name
         index: 1

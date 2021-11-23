@@ -32,7 +32,9 @@ pub fn new(matches: &ArgMatches) {
             if let Ok(project) = project {
                 // Create style directories
                 for dir in &dirs {
-                    create_dir(dir.as_str(), true);
+                    if dir != "." {
+                        create_dir(dir.as_str(), true);
+                    }
                 }
                 // Main dsc file
                 create(

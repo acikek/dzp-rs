@@ -4,7 +4,7 @@ use crate::io::log::err;
 use crate::cache::scripts::get_scripts;
 
 pub fn script(matches: &ArgMatches) {
-    let scripts = get_scripts();
+    let scripts = get_scripts(matches.is_present("force"));
 
     match matches.value_of("NAME") {
         Some(name) => {

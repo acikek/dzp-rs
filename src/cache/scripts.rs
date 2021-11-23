@@ -11,7 +11,7 @@ use crate::structs::script::Script;
 pub type ScriptContents = BTreeMap<String, Value>;
 pub type ScriptFile = BTreeMap<String, ScriptContents>;
 
-pub fn find_scripts() -> BTreeMap<String, Script> {
+pub fn find_scripts_raw() -> Vec<(String, ScriptFile)> {
     // Get files in current directory
     let files = WalkDir::new(".").into_iter().filter_map(|e| e.ok());
     // File extension needs to be .dsc
@@ -23,12 +23,15 @@ pub fn find_scripts() -> BTreeMap<String, Script> {
     })
     .filter(|r| r.1.is_ok());
     // Parse file contents
-    let parsed_files = file_pairs.map(|(p, c)| (p, from_str::<ScriptFile>(&c.unwrap())))
+    file_pairs.map(|(p, c)| (p, from_str::<ScriptFile>(&c.unwrap())))
         // Validate parse
         .filter(|r| r.1.is_ok())
         .map(|(p, c)| (p, c.unwrap()))
-        .collect::<Vec<(String, ScriptFile)>>();
+        .collect::<Vec<(String, ScriptFile)>>()
+}
 
+pub fn find_scripts() -> BTreeMap<String, Script> {
+    let parsed_files = find_scripts_raw();
     let mut result = BTreeMap::<String, Script>::new();
 
     for (path, scripts) in parsed_files {
@@ -44,25 +47,33 @@ pub fn find_scripts() -> BTreeMap<String, Script> {
     result
 }
 
-pub fn get_scripts() -> BTreeMap<String, Script> {
-    match read_to_string("./.dzp/scripts") {
-        Ok(cache) => {
-            match from_str::<BTreeMap<String, Script>>(&cache) {
-                Ok(data) => data,
-                Err(_) => BTreeMap::new()
-            }
-        }
-        Err(_) => {
-            let result = find_scripts();
+pub fn write_scripts() -> BTreeMap<String, Script> {
+    let result = find_scripts();
 
-            if Path::new("./.dzp").exists() {
-                let ser = to_string(&result);
-                if let Ok(content) = ser {
-                    let _ = write("./.dzp/scripts", content);
+    if Path::new("./.dzp").exists() {
+        let ser = to_string(&result);
+        if let Ok(content) = ser {
+            let _ = write("./.dzp/scripts", content);
+        }
+    }
+    
+    result
+}
+
+pub fn get_scripts(force: bool) -> BTreeMap<String, Script> {
+    if force {
+        write_scripts()
+    } else {
+        match read_to_string("./.dzp/scripts") {
+            Ok(cache) => {
+                match from_str::<BTreeMap<String, Script>>(&cache) {
+                    Ok(data) => data,
+                    Err(_) => BTreeMap::new()
                 }
             }
-            
-            result
+            Err(_) => {
+                write_scripts()
+            }
         }
     }
 }
