@@ -118,12 +118,41 @@ impl ProjectData {
         }
     }
 
-    pub fn readme_header(&self) -> String {
-        format!("# {}\n\n{}", self.name,  if self.description.is_empty() {
-            String::from("Sample description")
+    pub fn title(&self) -> String {
+        format!("{} v{}", self.name, self.version)
+    }
+
+    pub fn description_default(&self) -> String {
+        if self.description.is_empty() {
+            String::from("No description")
         } else {
             self.description.clone()
-        })
+        }
+    }
+
+    pub fn authors_default(&self) -> String {
+        if self.authors.is_empty() {
+            String::from("None")
+        } else {
+            self.authors.join(", ")
+        }
+    }
+
+    pub fn readme_header(&self) -> String {
+        format!("# {}\n\n{}", self.name, self.description_default())
+    }
+
+    pub fn comment_key(key: &str, value: String) -> String {
+        format!("#| @{} {}", key, value)
+    }
+
+    pub fn comment_header(&self) -> String {
+        format!("#| {}\n#| {}\n#|\n{}\n{}",
+            self.title(),
+            self.description_default(),
+            Self::comment_key("author", self.authors_default()),
+            Self::comment_key("license", self.license.clone())
+        )
     }
 
     pub fn license_text(&self) -> String {

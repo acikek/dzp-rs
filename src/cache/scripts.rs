@@ -22,8 +22,12 @@ pub fn find_scripts_raw() -> Vec<(String, ScriptFile)> {
         (path, read_to_string(f.path()))
     })
     .filter(|r| r.1.is_ok());
+    // dzp ignore rule
+    let unignored = file_pairs
+        .map(|(p, r)| (p, r.unwrap()))
+        .filter(|r| !r.1.replace(" ", "").starts_with("#:ignore"));
     // Parse file contents
-    let parsed_files = file_pairs.map(|(p, c)| (p, from_str::<ScriptFile>(&c.unwrap())))
+    let parsed_files = unignored.map(|(p, c)| (p, from_str::<ScriptFile>(&c)))
         // Validate parse
         .filter(|r| r.1.is_ok())
         .map(|(p, c)| (p, c.unwrap()))
