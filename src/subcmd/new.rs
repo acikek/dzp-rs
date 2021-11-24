@@ -47,9 +47,8 @@ pub fn new(matches: &ArgMatches) {
                 create_dir(".dzp", true);
                 create(".dzp/project", project.yaml(), true);
                 // Initialize git repository if possible
-                match Repository::init(current_dir().unwrap()) {
-                    Ok(_) => create(".gitignore", String::from("/.dzp"), true),
-                    Err(e) => err("Failed to initialize git repository.", Some(e.to_string()))
+                if let Err(e) = Repository::init(current_dir().unwrap()) {
+                    err("Failed to initialize git repository.", Some(e.to_string()))
                 }
             }
         }
