@@ -1,6 +1,9 @@
-use std::fs::{create_dir_all, write};
+use std::fs::{create_dir_all, read_to_string, write};
+
+use serde_yaml::from_str;
 
 use super::log::err;
+use crate::structs::project::ProjectData;
 
 pub fn debug_path(path: &str, debug: bool) {
     if debug {
@@ -23,5 +26,17 @@ pub fn create(path: &str, content: String, debug: bool) {
     match write(path, content) {
         Ok(_) => (),
         Err(e) => err("Failed to create file.", Some(e.to_string()))
+    }
+}
+
+pub fn get_project(path: Option<&str>) -> Result<ProjectData, ()> {
+    match read_to_string(path.unwrap_or("").to_owned() + ".dzp/project") {
+        Ok(file) => {
+            match from_str::<ProjectData>(&file) {
+                Ok(data) => Ok(data),
+                Err(e) => { err("Failed to parse project file.", Some(e.to_string())); Err(()) }
+            }
+        }
+        Err(e) => { err("Failed to read project file.", Some(e.to_string())); Err(()) }
     }
 }

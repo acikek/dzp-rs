@@ -16,6 +16,7 @@ fn main() {
     config::styles::init_styles(true);
 
     let _ = match app.clone().get_matches().subcommand() {
+        ("compile", Some(sub)) => subcmd::compile::compile(&sub),
         ("new", Some(sub)) => subcmd::new::new(&sub),
         ("project", Some(sub)) => subcmd::project::project(&sub),
         ("script", Some(sub)) => subcmd::script::script(&sub),

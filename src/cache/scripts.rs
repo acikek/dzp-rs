@@ -23,11 +23,23 @@ pub fn find_scripts_raw() -> Vec<(String, ScriptFile)> {
     })
     .filter(|r| r.1.is_ok());
     // Parse file contents
-    file_pairs.map(|(p, c)| (p, from_str::<ScriptFile>(&c.unwrap())))
+    let parsed_files = file_pairs.map(|(p, c)| (p, from_str::<ScriptFile>(&c.unwrap())))
         // Validate parse
         .filter(|r| r.1.is_ok())
         .map(|(p, c)| (p, c.unwrap()))
-        .collect::<Vec<(String, ScriptFile)>>()
+        .collect::<Vec<(String, ScriptFile)>>();
+
+    let mut result = Vec::<(String, ScriptFile)>::new();
+
+    for (path, file) in parsed_files {
+        for (name, contents) in file {
+            let mut map = BTreeMap::new();
+            map.insert(name, contents);
+            result.push((path.clone(), map));
+        }
+    }
+
+    result
 }
 
 pub fn find_scripts() -> BTreeMap<String, Script> {
@@ -45,6 +57,31 @@ pub fn find_scripts() -> BTreeMap<String, Script> {
     }
 
     result
+}
+
+pub fn script_contents() -> Vec<String> {
+    let scripts = find_scripts_raw();
+    let mut unique = Vec::new();
+
+    for file in &scripts {
+        let keys = file.1.keys().map(|s| s.clone()).collect::<Vec<String>>();
+        let script_name = keys.first().unwrap();
+
+        if !scripts.iter().find(|(name, _)| name == script_name).is_some() {
+            unique.push(file);
+        }
+    }
+    
+    unique
+        .iter()
+        .map(|(_, script)| to_string(script))
+        .filter_map(|s| s.ok())
+        .map(|s| s.trim_start_matches("---\n")
+            // Hack to remove escaped quotes from commands
+            .replace("\"", "")
+            .replace("\\", "\"")
+            .to_owned())
+        .collect::<Vec<String>>()
 }
 
 pub fn write_scripts() -> BTreeMap<String, Script> {

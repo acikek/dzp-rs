@@ -7,6 +7,7 @@ use crate::cache::scripts::ScriptContents;
 #[derive(Serialize, Deserialize)]
 pub struct Script {
     pub path: String,
+    #[serde(rename = "type")]
     pub script_type: String,
     pub keys: Vec<String>
 }
