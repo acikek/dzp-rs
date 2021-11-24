@@ -145,12 +145,16 @@ impl ProjectData {
         lazer()
             .print(&self.name)
             .print_ln(&format!(" v{}", self.version))
-            .print_ln(&self.description)
+            .iff(self.description.is_empty())
+                .print_ln("No description")
+            .el()
+                .print_ln(&self.description)
+            .end()
             .print_ln("")
             .iff(self.authors.len() > 1)
                 .print_ln(&format!("Authors: {}", self.authors.join(", ")))
             .el()
-                .print_ln(&format!("Author: {}", self.authors.first().unwrap()))
+                .print_ln(&format!("Author: {}", self.authors.first().unwrap_or(&"None".to_owned())))
             .end()
             .print_ln(&format!("License: {}", self.license));
 
@@ -158,7 +162,7 @@ impl ProjectData {
         Self::print_url("Repository", self.repository.clone());
 
         lazer()
-            .iff(self.dependencies.is_some())
+            .iff(self.dependencies.is_some() && !self.dependencies.clone().unwrap().is_empty())
                 .print_ln("\nDependencies:")
                 .print_ln(&self.dependencies.clone().unwrap_or(Vec::new()).iter().map(|s| format!("- {}", s)).collect::<Vec<String>>().join("\n"))
             .end();
