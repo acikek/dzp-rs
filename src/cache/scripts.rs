@@ -48,7 +48,7 @@ pub fn find_scripts_raw() -> Vec<(String, ScriptFile)> {
 
 pub fn find_scripts() -> BTreeMap<String, Script> {
     let parsed_files = find_scripts_raw();
-    let mut result = BTreeMap::<String, Script>::new();
+    let mut result = BTreeMap::new();
 
     for (path, scripts) in parsed_files {
         for (name, contents) in scripts {
@@ -117,4 +117,18 @@ pub fn get_scripts(force: bool) -> BTreeMap<String, Script> {
             }
         }
     }
+}
+
+pub fn get_script_types() -> BTreeMap<String, Vec<String>> {
+    let scripts = get_scripts(true);
+    let mut result = BTreeMap::<String, Vec<String>>::new();
+
+    for (name, script) in scripts {
+        match result.get_mut(&script.script_type) {
+            Some(v) => v.push(name),
+            None => { let _ = result.insert(script.script_type, vec![name]); }
+        }
+    }
+
+    result
 }

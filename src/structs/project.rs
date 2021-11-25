@@ -4,8 +4,10 @@ use rustyline::Editor;
 use semver::Version;
 use serde::{Serialize, Deserialize};
 use serde_yaml::to_string;
+use titlecase::titlecase;
 use url::Url;
 
+use crate::cache::scripts::get_script_types;
 use crate::io::log::err;
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -140,6 +142,53 @@ impl ProjectData {
 
     pub fn readme_header(&self) -> String {
         format!("# {}\n\n{}", self.name, self.description_default())
+    }
+
+    const README_ABOUT: &'static str = "## About\n\nProvide a brief explanation of your project and how it's used.";
+    const README_EXAMPLE: &'static str = "## Example\n\nUse this space to demonstrate the usage of your project.\n> If the user only needs to worry about installation, consider omitting this section.";
+    const README_DZP: &'static str = "Use [dzp](https://github.com/acikek/dzp-rs) for additional features.";
+
+    fn readme_setup(&self) -> String {
+        let repo = match &self.repository {
+            Some(u) => u.to_string(),
+            None => "https://github.com/<user>/<name>".to_owned()
+        };
+
+        format!("## Setup\n\nClone using git:\n```sh\ngit clone {}\n```\n{}", repo, Self::README_DZP)
+    }
+
+    fn readme_scripts(&self) -> String {
+        let scripts = get_script_types().iter()
+            .map(|(script_type, names)| {
+                let t = titlecase(script_type);
+                let n = names.iter()
+                    .map(|s| format!("- `{}`", s))
+                    .collect::<Vec<String>>()
+                    .join("\n");
+
+                format!("### {}\n\n{}", t, n)
+            })
+            .collect::<Vec<String>>()
+            .join("\n\n");
+
+        format!("## Scripts\n\n{}", scripts)
+    }
+
+    pub fn readme_license(&self) -> String {
+        format!("## License\n\n{} © (year) (name)", self.license)
+    }
+
+    pub fn readme(&self) -> String {
+        let sections = vec![
+            self.readme_header(),
+            Self::README_ABOUT.to_owned(),
+            self.readme_setup(),
+            Self::README_EXAMPLE.to_owned(),
+            self.readme_scripts(),
+            self.readme_license()
+        ];
+
+        sections.join("\n\n")
     }
 
     pub fn comment_key(key: &str, value: String) -> String {

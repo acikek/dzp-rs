@@ -19,6 +19,7 @@ fn main() {
         ("compile", Some(sub)) => subcmd::compile::compile(&sub),
         ("new", Some(sub)) => subcmd::new::new(&sub),
         ("project", Some(sub)) => subcmd::project::project(&sub),
+        ("readme", _) => subcmd::readme::readme(),
         ("script", Some(sub)) => subcmd::script::script(&sub),
         _ => { let _ = app.print_help(); }
     };

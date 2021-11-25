@@ -41,6 +41,10 @@ subcommands:
         long: path
         takes_value: true
         value_name: PATH
+- readme:
+    about: Generates a README file based on the project
+    version: "0.1.0"
+    author: Skye P. <spiralixp@gmail.com>
 - script:
     about: Retrieves Denizen script data
     version: "0.1.0"

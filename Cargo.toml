@@ -17,5 +17,6 @@ rustyline = "9.0.0"
 semver = { version = "1.0", features = ["serde"] }
 serde = { version = "1.0", features = ["derive"] }
 serde_yaml = "0.8.20"
+titlecase = "1.1.0"
 url = { version = "2.2.2", features = ["serde"] }
 walkdir = "2"
