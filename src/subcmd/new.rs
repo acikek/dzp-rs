@@ -5,7 +5,7 @@ use git2::Repository;
 
 use crate::config::styles::read_style;
 use crate::io::{log::err, fs::{create_dir, create}};
-use crate::structs::project::ProjectData;
+use crate::structs::project::Project;
 
 const MAIN: &str = r#"
   type: world
@@ -24,9 +24,9 @@ pub fn new(matches: &ArgMatches) {
             // The project data object
             // Take input if default argument not supplied
             let project = if matches.is_present("default") {
-                Ok(ProjectData::from_name(name))
+                Ok(Project::from_name(name))
             } else {
-                ProjectData::from_input(name)
+                Project::from_input(name)
             };
             
             if let Ok(project) = project {

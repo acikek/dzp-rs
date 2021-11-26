@@ -11,7 +11,7 @@ use crate::cache::scripts::get_script_types;
 use crate::io::log::err;
 
 #[derive(Debug, Serialize, Deserialize)]
-pub struct ProjectData {
+pub struct Project {
     pub name: String,
     pub description: String,
     pub authors: Vec<String>,
@@ -24,7 +24,7 @@ pub struct ProjectData {
 
 type Error = rustyline::error::ReadlineError;
 
-impl ProjectData {
+impl Project {
     fn input(text: &str, rl: &mut Editor<()>) -> Result<String, Error> {
         let line = rl.readline(&format!("{}: ", text))?;
         rl.add_history_entry(&line);
